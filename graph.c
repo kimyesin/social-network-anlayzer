@@ -3,7 +3,7 @@
 #include <string.h>
 #include "graph.h"
 
-static int is_already_friend(Graph *g, int id_a, int id_b) {
+static int are_connected(Graph *g, int id_a, int id_b) {
     AdjNode *cur = g->users[id_a].head;
     while (cur != NULL) {
         if (cur->dest == id_b) return 1;
@@ -24,9 +24,22 @@ Graph *graph_create() {
     return g;
 }
 
+void graph_free(Graph *g) {
+    for (int i = 0; i < MAX_USERS; i++) {
+        AdjNode *cur = g->users[i].head;
+        while (cur != NULL) {
+            AdjNode *temp = cur;
+            cur = cur->next;
+            free(temp);
+        }
+    }
+    hash_free(g->ht);
+    free(g);
+}
+
 void graph_add_user(Graph *g, char *name) {
     if (hash_search(g->ht, name) != -1) {
-        printf("User already exists: %s\n", name);
+        printf("%s already exists.\n", name);
         return;
     }
     int id = -1;
@@ -47,13 +60,13 @@ void graph_add_user(Graph *g, char *name) {
     g->users[id].is_active = 1;
     g->user_count++;
     hash_insert(g->ht, name, id);
-    printf("User added: %s (ID: %d)\n", name, id);
+    printf("%s created.\n", name);
 }
 
 void graph_remove_user(Graph *g, char *name) {
     int id = hash_search(g->ht, name);
     if (id == -1) {
-        printf("User not found: %s\n", name);
+        printf("User '%s' not found.\n", name);
         return;
     }
     AdjNode *cur = g->users[id].head;
@@ -66,25 +79,25 @@ void graph_remove_user(Graph *g, char *name) {
 
     for (int i = 0; i < MAX_USERS; i++) {
         if (!g->users[i].is_active || i == id) continue;
-        AdjNode *c = g->users[i].head;
+        AdjNode *cur = g->users[i].head;
         AdjNode *prev = NULL;
-        while (c != NULL) {
-            if (c->dest == id) {
+        while (cur != NULL) {
+            if (cur->dest == id) {
                 if (prev == NULL)
-                    g->users[i].head = c->next;
+                    g->users[i].head = cur->next;
                 else
-                    prev->next = c->next;
-                free(c);
+                    prev->next = cur->next;
+                free(cur);
                 break;
             }
-            prev = c;
-            c = c->next;
+            prev = cur;
+            cur = cur->next;
         }
     }
     g->users[id].is_active = 0;
     g->user_count--;
     hash_delete(g->ht, name);
-    printf("User removed: %s\n", name);
+    printf("%s deleted.\n", name);
 }
 
 void graph_add_friend(Graph *g, char *a, char *b) {
@@ -94,23 +107,23 @@ void graph_add_friend(Graph *g, char *a, char *b) {
         printf("User not found.\n");
         return;
     }
-    if (is_already_friend(g, id_a, id_b)) {
-        printf("Already friends: %s <-> %s\n", a, b);
+    if (are_connected(g, id_a, id_b)) {
+        printf("%s and %s are already friends.\n", a, b);
         return;
     }
-    AdjNode *node_b = (AdjNode *)malloc(sizeof(AdjNode));
-    if (node_b == NULL) return;
-    node_b->dest = id_b;
-    node_b->next = g->users[id_a].head;
-    g->users[id_a].head = node_b;
+    AdjNode *link_to_b = (AdjNode *)malloc(sizeof(AdjNode));
+    if (link_to_b == NULL) return;
+    link_to_b->dest = id_b;
+    link_to_b->next = g->users[id_a].head;
+    g->users[id_a].head = link_to_b;
 
-    AdjNode *node_a = (AdjNode *)malloc(sizeof(AdjNode));
-    if (node_a == NULL) return;
-    node_a->dest = id_a;
-    node_a->next = g->users[id_b].head;
-    g->users[id_b].head = node_a;
+    AdjNode *link_to_a = (AdjNode *)malloc(sizeof(AdjNode));
+    if (link_to_a == NULL) return;
+    link_to_a->dest = id_a;
+    link_to_a->next = g->users[id_b].head;
+    g->users[id_b].head = link_to_a;
 
-    printf("Friend added: %s <-> %s\n", a, b);
+    printf("%s and %s are now friends.\n", a, b);
 }
 
 void graph_remove_friend(Graph *g, char *a, char *b) {
@@ -147,37 +160,24 @@ void graph_remove_friend(Graph *g, char *a, char *b) {
         prev = cur;
         cur = cur->next;
     }
-    printf("Friend removed: %s <-> %s\n", a, b);
+    printf("Removed friendship: %s and %s.\n", a, b);
 }
 
 void graph_print_friends(Graph *g, char *name) {
     int id = hash_search(g->ht, name);
     if (id == -1) {
-        printf("User not found: %s\n", name);
+        printf("User '%s' not found.\n", name);
         return;
     }
-    printf("%s's friends: ", name);
     AdjNode *cur = g->users[id].head;
     if (cur == NULL) {
-        printf("(none)\n");
+        printf("%s has no connections yet.\n", name);
         return;
     }
+    printf("%s's connections:\n", name);
+    int idx = 1;
     while (cur != NULL) {
-        printf("%s ", g->users[cur->dest].name);
+        printf("  %d. %s\n", idx++, g->users[cur->dest].name);
         cur = cur->next;
     }
-    printf("\n");
-}
-
-void graph_free(Graph *g) {
-    for (int i = 0; i < MAX_USERS; i++) {
-        AdjNode *cur = g->users[i].head;
-        while (cur != NULL) {
-            AdjNode *temp = cur;
-            cur = cur->next;
-            free(temp);
-        }
-    }
-    hash_free(g->ht);
-    free(g);
 }
