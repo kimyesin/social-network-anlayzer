@@ -2,7 +2,6 @@
 #include <string.h>
 #include "sort.h"
 
-// 공통 친구 수 기준 내림차순 정렬 (버블 정렬)
 static void bubble_sort(Candidate *arr, int size) {
     for (int i = 0; i < size - 1; i++) {
         for (int j = 0; j < size - i - 1; j++) {
@@ -18,7 +17,7 @@ static void bubble_sort(Candidate *arr, int size) {
 void recommend_friends(Graph *g, char *name) {
     int id = hash_search(g->ht, name);
     if (id == -1) {
-        printf("존재하지 않는 사용자: %s\n", name);
+        printf("User not found: %s\n", name);
         return;
     }
 
@@ -29,7 +28,6 @@ void recommend_friends(Graph *g, char *name) {
         if (!g->users[i].is_active) continue;
         if (i == id) continue;
 
-        // 이미 친구면 추천 제외
         AdjNode *check = g->users[id].head;
         int already_friend = 0;
         while (check != NULL) {
@@ -38,7 +36,6 @@ void recommend_friends(Graph *g, char *name) {
         }
         if (already_friend) continue;
 
-        // 공통 친구 수 계산
         int common = 0;
         AdjNode *a = g->users[id].head;
         while (a != NULL) {
@@ -60,11 +57,11 @@ void recommend_friends(Graph *g, char *name) {
 
     bubble_sort(candidates, count);
 
-    printf("%s의 친구 추천:\n", name);
+    printf("Friend recommendations for %s:\n", name);
     if (count == 0) {
-        printf("추천할 친구가 없습니다.\n");
+        printf("  No recommendations.\n");
         return;
     }
     for (int i = 0; i < count; i++)
-        printf("  %s (공통 친구 %d명)\n", candidates[i].name, candidates[i].common_count);
+        printf("  %s (common friends: %d)\n", candidates[i].name, candidates[i].common_count);
 }

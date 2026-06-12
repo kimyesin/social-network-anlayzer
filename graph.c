@@ -3,7 +3,6 @@
 #include <string.h>
 #include "graph.h"
 
-// 이미 친구인지 확인 (중복 추가 방지용)
 static int is_already_friend(Graph *g, int id_a, int id_b) {
     AdjNode *cur = g->users[id_a].head;
     while (cur != NULL) {
@@ -27,7 +26,7 @@ Graph *graph_create() {
 
 void graph_add_user(Graph *g, char *name) {
     if (hash_search(g->ht, name) != -1) {
-        printf("이미 존재하는 사용자입니다: %s\n", name);
+        printf("User already exists: %s\n", name);
         return;
     }
     int id = -1;
@@ -38,7 +37,7 @@ void graph_add_user(Graph *g, char *name) {
         }
     }
     if (id == -1) {
-        printf("사용자 최대 인원 초과!\n");
+        printf("Max users reached!\n");
         return;
     }
     g->users[id].id = id;
@@ -48,13 +47,13 @@ void graph_add_user(Graph *g, char *name) {
     g->users[id].is_active = 1;
     g->user_count++;
     hash_insert(g->ht, name, id);
-    printf("사용자 추가: %s (ID: %d)\n", name, id);
+    printf("User added: %s (ID: %d)\n", name, id);
 }
 
 void graph_remove_user(Graph *g, char *name) {
     int id = hash_search(g->ht, name);
     if (id == -1) {
-        printf("존재하지 않는 사용자: %s\n", name);
+        printf("User not found: %s\n", name);
         return;
     }
     AdjNode *cur = g->users[id].head;
@@ -65,7 +64,6 @@ void graph_remove_user(Graph *g, char *name) {
     }
     g->users[id].head = NULL;
 
-    // 다른 사용자 친구 목록에서 조용히 제거 (메시지 없이)
     for (int i = 0; i < MAX_USERS; i++) {
         if (!g->users[i].is_active || i == id) continue;
         AdjNode *c = g->users[i].head;
@@ -86,19 +84,18 @@ void graph_remove_user(Graph *g, char *name) {
     g->users[id].is_active = 0;
     g->user_count--;
     hash_delete(g->ht, name);
-    printf("사용자 삭제: %s\n", name);
+    printf("User removed: %s\n", name);
 }
 
 void graph_add_friend(Graph *g, char *a, char *b) {
     int id_a = hash_search(g->ht, a);
     int id_b = hash_search(g->ht, b);
     if (id_a == -1 || id_b == -1) {
-        printf("존재하지 않는 사용자입니다.\n");
+        printf("User not found.\n");
         return;
     }
-    // 중복 체크
     if (is_already_friend(g, id_a, id_b)) {
-        printf("이미 친구입니다: %s ↔ %s\n", a, b);
+        printf("Already friends: %s <-> %s\n", a, b);
         return;
     }
     AdjNode *node_b = (AdjNode *)malloc(sizeof(AdjNode));
@@ -113,7 +110,7 @@ void graph_add_friend(Graph *g, char *a, char *b) {
     node_a->next = g->users[id_b].head;
     g->users[id_b].head = node_a;
 
-    printf("친구 추가: %s ↔ %s\n", a, b);
+    printf("Friend added: %s <-> %s\n", a, b);
 }
 
 void graph_remove_friend(Graph *g, char *a, char *b) {
@@ -150,19 +147,19 @@ void graph_remove_friend(Graph *g, char *a, char *b) {
         prev = cur;
         cur = cur->next;
     }
-    printf("친구 삭제: %s ↔ %s\n", a, b);
+    printf("Friend removed: %s <-> %s\n", a, b);
 }
 
 void graph_print_friends(Graph *g, char *name) {
     int id = hash_search(g->ht, name);
     if (id == -1) {
-        printf("존재하지 않는 사용자: %s\n", name);
+        printf("User not found: %s\n", name);
         return;
     }
-    printf("%s의 친구: ", name);
+    printf("%s's friends: ", name);
     AdjNode *cur = g->users[id].head;
     if (cur == NULL) {
-        printf("(없음)\n");
+        printf("(none)\n");
         return;
     }
     while (cur != NULL) {
