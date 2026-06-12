@@ -15,7 +15,7 @@ static void bubble_sort(Candidate *arr, int size) {
 }
 
 void recommend_friends(Graph *g, char *name) {
-    int id = hash_search(g->ht, name);
+    int id = hmap_get(g->hm, name);
     if (id == -1) {
         printf("User not found: %s\n", name);
         return;

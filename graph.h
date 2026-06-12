@@ -20,7 +20,7 @@ typedef struct {
 typedef struct {
     User users[MAX_USERS];
     int user_count;
-    HashTable *ht;
+    HashMap *hm;
 } Graph;
 
 Graph *graph_create();

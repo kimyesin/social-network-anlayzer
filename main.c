@@ -28,7 +28,7 @@ int main() {
     ActivityLog *log = log_create();
     int choice;
     char name1[MAX_USERNAME], name2[MAX_USERNAME];
-    char log_msg[100];
+    char log_msg[150];
 
     while (1) {
         print_menu();
@@ -41,7 +41,7 @@ int main() {
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 graph_add_user(g, name1);
-                snprintf(log_msg, 100, "Added user: %s", name1);
+                snprintf(log_msg, 150, "Added user: %s", name1);
                 log_add(log, log_msg);
                 break;
             case 2:
@@ -49,7 +49,7 @@ int main() {
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 graph_remove_user(g, name1);
-                snprintf(log_msg, 100, "Removed user: %s", name1);
+                snprintf(log_msg, 150, "Removed user: %s", name1);
                 log_add(log, log_msg);
                 break;
             case 3:
@@ -60,7 +60,7 @@ int main() {
                 fgets(name2, MAX_USERNAME, stdin);
                 name2[strcspn(name2, "\n")] = 0;
                 graph_add_friend(g, name1, name2);
-                snprintf(log_msg, 100, "Added friend: %s <-> %s", name1, name2);
+                snprintf(log_msg, 150, "Added friend: %s <-> %s", name1, name2);
                 log_add(log, log_msg);
                 break;
             case 4:
@@ -71,7 +71,7 @@ int main() {
                 fgets(name2, MAX_USERNAME, stdin);
                 name2[strcspn(name2, "\n")] = 0;
                 graph_remove_friend(g, name1, name2);
-                snprintf(log_msg, 100, "Removed friend: %s <-> %s", name1, name2);
+                snprintf(log_msg, 150, "Removed friend: %s <-> %s", name1, name2);
                 log_add(log, log_msg);
                 break;
             case 5:

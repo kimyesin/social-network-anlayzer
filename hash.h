@@ -1,23 +1,23 @@
 #ifndef HASH_H
 #define HASH_H
 
-#define TABLE_SIZE 101
+#define MAP_SIZE 97
 #define MAX_USERNAME 50
 
-typedef struct HashEntry {
+typedef struct Bucket {
     char name[MAX_USERNAME];
     int user_id;
-    struct HashEntry *next;
-} HashEntry;
+    struct Bucket *next;
+} Bucket;
 
 typedef struct {
-    HashEntry *table[TABLE_SIZE];
-} HashTable;
+    Bucket *slots[MAP_SIZE];
+} HashMap;
 
-HashTable *hash_create();
-void hash_insert(HashTable *ht, char *name, int id);
-int hash_search(HashTable *ht, char *name);
-void hash_delete(HashTable *ht, char *name);
-void hash_free(HashTable *ht);
+HashMap *hmap_create();
+void hmap_put(HashMap *hm, char *name, int id);
+int  hmap_get(HashMap *hm, char *name);
+void hmap_remove(HashMap *hm, char *name);
+void hmap_free(HashMap *hm);
 
 #endif

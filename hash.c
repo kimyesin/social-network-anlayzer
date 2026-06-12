@@ -11,31 +11,31 @@ static int hash_func(char *name) {
         name++;
     }
     // 음수 방지
-    return (result % TABLE_SIZE + TABLE_SIZE) % TABLE_SIZE;
+    return (result % MAP_SIZE + MAP_SIZE) % MAP_SIZE;
 }
 
-HashTable *hash_create() {
-    HashTable *ht = (HashTable *)malloc(sizeof(HashTable));
-    if (ht == NULL) return NULL;
-    for (int i = 0; i < TABLE_SIZE; i++)
-        ht->table[i] = NULL;
-    return ht;
+HashMap *hmap_create() {
+    HashMap *hm = (HashMap *)malloc(sizeof(HashMap));
+    if (hm == NULL) return NULL;
+    for (int i = 0; i < MAP_SIZE; i++)
+        hm->slots[i] = NULL;
+    return hm;
 }
 
-void hash_insert(HashTable *ht, char *name, int id) {
+void hmap_put(HashMap *hm, char *name, int id) {
     int idx = hash_func(name);
-    HashEntry *item = (HashEntry *)malloc(sizeof(HashEntry));
+    Bucket *item = (Bucket *)malloc(sizeof(Bucket));
     if (item == NULL) return;
     strncpy(item->name, name, MAX_USERNAME - 1);
     item->name[MAX_USERNAME - 1] = '\0';
     item->user_id = id;
-    item->next = ht->table[idx];
-    ht->table[idx] = item;
+    item->next = hm->slots[idx];
+    hm->slots[idx] = item;
 }
 
-int hash_search(HashTable *ht, char *name) {
+int hmap_get(HashMap *hm, char *name) {
     int idx = hash_func(name);
-    HashEntry *cur = ht->table[idx];
+    Bucket *cur = hm->slots[idx];
     while (cur != NULL) {
         if (strcmp(cur->name, name) == 0)
             return cur->user_id;
@@ -44,14 +44,14 @@ int hash_search(HashTable *ht, char *name) {
     return -1;
 }
 
-void hash_delete(HashTable *ht, char *name) {
+void hmap_remove(HashMap *hm, char *name) {
     int idx = hash_func(name);
-    HashEntry *cur = ht->table[idx];
-    HashEntry *prev = NULL;
+    Bucket *cur = hm->slots[idx];
+    Bucket *prev = NULL;
     while (cur != NULL) {
         if (strcmp(cur->name, name) == 0) {
             if (prev == NULL)
-                ht->table[idx] = cur->next;
+                hm->slots[idx] = cur->next;
             else
                 prev->next = cur->next;
             free(cur);
@@ -62,14 +62,14 @@ void hash_delete(HashTable *ht, char *name) {
     }
 }
 
-void hash_free(HashTable *ht) {
-    for (int i = 0; i < TABLE_SIZE; i++) {
-        HashEntry *cur = ht->table[i];
+void hmap_free(HashMap *hm) {
+    for (int i = 0; i < MAP_SIZE; i++) {
+        Bucket *cur = hm->slots[i];
         while (cur != NULL) {
-            HashEntry *temp = cur;
+            Bucket *temp = cur;
             cur = cur->next;
             free(temp);
         }
     }
-    free(ht);
+    free(hm);
 }

@@ -2,7 +2,6 @@
 #include <string.h>
 #include "centrality.h"
 
-// 친구 수 세기
 static int count_degree(Graph *g, int id) {
     int count = 0;
     AdjNode *cur = g->users[id].head;
@@ -13,7 +12,6 @@ static int count_degree(Graph *g, int id) {
     return count;
 }
 
-// 내림차순 버블 정렬
 static void sort_by_degree(DegreeInfo *arr, int size) {
     for (int i = 0; i < size - 1; i++) {
         for (int j = 0; j < size - i - 1; j++) {
