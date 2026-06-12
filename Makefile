@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -g
 
 TARGET = social
-SRCS = main.c graph.c hash.c bfs.c dfs.c sort.c
+SRCS = main.c graph.c hash.c bfs.c dfs.c sort.c log.c centrality.c
 OBJS = $(SRCS:.c=.o)
 
 $(TARGET): $(OBJS)

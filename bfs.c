@@ -3,37 +3,72 @@
 #include "bfs.h"
 
 int bfs_distance(Graph *g, char *start, char *target) {
-    int start_id = hmap_get(g->hm, start);
-    int target_id = hmap_get(g->hm, target);
+    int src = hmap_get(g->hm, start);
+    int dst = hmap_get(g->hm, target);
 
-    if (start_id == -1 || target_id == -1) {
-        printf("User not found.\n");
+    if (src == -1 || dst == -1) {
+        printf("User not found\n");
         return -1;
     }
-    if (start_id == target_id) return 0;
+    if (src == dst) return 0;
 
-    int visited[MAX_USERS] = {0};
-    int distance[MAX_USERS] = {0};
-    int queue[MAX_USERS];
-    int front = 0, rear = 0;
+    int q[MAX_USERS];
+    int depth[MAX_USERS];
+    int seen[MAX_USERS];
 
-    visited[start_id] = 1;
-    queue[rear++] = start_id;
+    memset(seen, 0, sizeof(seen));
+    memset(depth, 0, sizeof(depth));
 
-    while (front < rear) {
-        int cur = queue[front++];
-        AdjNode *adj = g->users[cur].head;
-        while (adj != NULL) {
-            int next = adj->dest;
-            if (!visited[next]) {
-                visited[next] = 1;
-                distance[next] = distance[cur] + 1;
-                if (next == target_id)
-                    return distance[next];
-                queue[rear++] = next;
+    int head = 0, tail = 0;
+    seen[src] = 1;
+    q[tail++] = src;
+
+    while (head < tail) {
+        int node = q[head++];
+        AdjNode *nb = g->users[node].head;
+        while (nb != NULL) {
+            int next = nb->dest;
+            if (!seen[next]) {
+                seen[next] = 1;
+                depth[next] = depth[node] + 1;
+                if (next == dst)
+                    return depth[next];
+                q[tail++] = next;
             }
-            adj = adj->next;
+            nb = nb->next;
         }
     }
     return -1;
+}
+
+void bfs_print_reachable(Graph *g, char *start) {
+    int src = hmap_get(g->hm, start);
+    if (src == -1) {
+        printf("User not found\n");
+        return;
+    }
+
+    int q[MAX_USERS];
+    int seen[MAX_USERS];
+    memset(seen, 0, sizeof(seen));
+
+    int head = 0, tail = 0;
+    seen[src] = 1;
+    q[tail++] = src;
+
+    printf("Reachable from %s: ", start);
+    while (head < tail) {
+        int node = q[head++];
+        if (node != src)
+            printf("%s ", g->users[node].name);
+        AdjNode *nb = g->users[node].head;
+        while (nb != NULL) {
+            if (!seen[nb->dest]) {
+                seen[nb->dest] = 1;
+                q[tail++] = nb->dest;
+            }
+            nb = nb->next;
+        }
+    }
+    printf("\n");
 }

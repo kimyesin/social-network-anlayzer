@@ -3,15 +3,15 @@
 #include <string.h>
 #include "hash.h"
 
-// 31 곱하는 이유: 소수라서 글자 순서 달라도 해시값이 달라짐
+// 해시 함수: 각 문자에 위치 가중치(i+1)를 곱해 순서가 다른 문자열이 같은 값이 되는 걸 방지
 static int hash_func(char *name) {
-    int result = 0;
-    while (*name) {
-        result = result * 31 + *name;
-        name++;
+    unsigned int result = 0;
+    int i = 0;
+    while (name[i]) {
+        result += (unsigned char)name[i] * (i + 1) * 37;
+        i++;
     }
-    // 음수 방지
-    return (result % MAP_SIZE + MAP_SIZE) % MAP_SIZE;
+    return (int)(result % MAP_SIZE);
 }
 
 HashMap *hmap_create() {
@@ -66,9 +66,9 @@ void hmap_free(HashMap *hm) {
     for (int i = 0; i < MAP_SIZE; i++) {
         Bucket *cur = hm->slots[i];
         while (cur != NULL) {
-            Bucket *temp = cur;
+            Bucket *tmp = cur;
             cur = cur->next;
-            free(temp);
+            free(tmp);
         }
     }
     free(hm);
