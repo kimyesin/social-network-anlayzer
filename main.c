@@ -1,11 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include "graph.h"
-#include "bfs.h"
-#include "dfs.h"
-#include "sort.h"
-#include "centrality.h"
-#include "log.h"
+#include "include/network.h"
+#include "include/feature.h"
 
 void print_menu() {
     printf("\n=== Mini Social Network ===\n");
@@ -75,13 +71,13 @@ int main() {
                 log_add(log, log_msg);
                 break;
             case 5:
-                printf("View friend list: ");
+                printf("Username: ");
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 graph_print_friends(g, name1);
                 break;
             case 6:
-                printf("Recommend friends: ");
+                printf("Username: ");
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 recommend_friends(g, name1);
@@ -94,16 +90,14 @@ int main() {
                 fgets(name2, MAX_USERNAME, stdin);
                 name2[strcspn(name2, "\n")] = 0;
                 int dist = bfs_distance(g, name1, name2);
-                if (dist == -1)
-                    printf("Not connection found.\n");
-                else
-                    printf("Distance between users: %d\n", dist);
+                if (dist == -1) printf("No connection found.\n");
+                else            printf("Distance: %d\n", dist);
                 break;
             case 8:
                 dfs_find_groups(g);
                 break;
             case 9:
-                printf("Top k users: ");
+                printf("Top k users (k=): ");
                 int k;
                 scanf("%d", &k);
                 getchar();
