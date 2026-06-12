@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -g
 
 TARGET = social
-SRCS = main.c graph.c hash.c bfs.c dfs.c sort.c log.c centrality.c
+SRCS = main.c src/network.c src/feature.c
 OBJS = $(SRCS:.c=.o)
 
 $(TARGET): $(OBJS)
@@ -12,4 +12,4 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f main.o src/network.o src/feature.o $(TARGET)
