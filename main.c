@@ -8,19 +8,19 @@
 #include "log.h"
 
 void print_menu() {
-    printf("\n=== Social Network Analyzer ===\n");
-    printf("1. Add user\n");
-    printf("2. Remove user\n");
-    printf("3. Add friend\n");
-    printf("4. Remove friend\n");
-    printf("5. Print friend list\n");
-    printf("6. Recommend friends\n");
-    printf("7. Find relationship distance (BFS)\n");
-    printf("8. Find connected groups (DFS)\n");
-    printf("9. Influence analysis (Top-K)\n");
-    printf("10. View activity log\n");
+    printf("\n=== Mini Social Network ===\n");
+    printf("1. Create User\n");
+    printf("2. Delete User\n");
+    printf("3. Add Friend\n");
+    printf("4. Remove Friend\n");
+    printf("5. View Friend List\n");
+    printf("6. Recommend Friends\n");
+    printf("7. Find Distance\n");
+    printf("8. View Groups\n");
+    printf("9. Influence Ranking\n");
+    printf("10. Activity Log\n");
     printf("11. Exit\n");
-    printf("Select: ");
+    printf("Select Menu: ");
 }
 
 int main() {
@@ -37,7 +37,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                printf("Enter name: ");
+                printf("New Username: ");
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 graph_add_user(g, name1);
@@ -45,7 +45,7 @@ int main() {
                 log_add(log, log_msg);
                 break;
             case 2:
-                printf("Enter name to remove: ");
+                printf("User to delete: ");
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 graph_remove_user(g, name1);
@@ -53,10 +53,10 @@ int main() {
                 log_add(log, log_msg);
                 break;
             case 3:
-                printf("First user: ");
+                printf("User1: ");
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
-                printf("Second user: ");
+                printf("User2: ");
                 fgets(name2, MAX_USERNAME, stdin);
                 name2[strcspn(name2, "\n")] = 0;
                 graph_add_friend(g, name1, name2);
@@ -75,13 +75,13 @@ int main() {
                 log_add(log, log_msg);
                 break;
             case 5:
-                printf("Enter name: ");
+                printf("View friend list: ");
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 graph_print_friends(g, name1);
                 break;
             case 6:
-                printf("Enter name: ");
+                printf("Recommend friends: ");
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 recommend_friends(g, name1);
@@ -95,15 +95,15 @@ int main() {
                 name2[strcspn(name2, "\n")] = 0;
                 int dist = bfs_distance(g, name1, name2);
                 if (dist == -1)
-                    printf("Not connected.\n");
+                    printf("Not connection found.\n");
                 else
-                    printf("Relationship distance: %d\n", dist);
+                    printf("Distance between users: %d\n", dist);
                 break;
             case 8:
                 dfs_find_groups(g);
                 break;
             case 9:
-                printf("Enter K: ");
+                printf("Top k users: ");
                 int k;
                 scanf("%d", &k);
                 getchar();
@@ -118,7 +118,7 @@ int main() {
                 printf("Goodbye!\n");
                 return 0;
             default:
-                printf("Invalid input.\n");
+                printf("Invalid menu option.\n");
         }
     }
 }
