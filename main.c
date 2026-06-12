@@ -4,6 +4,7 @@
 #include "bfs.h"
 #include "dfs.h"
 #include "sort.h"
+#include "centrality.h"
 
 void print_menu() {
     printf("\n=== Social Network Analyzer ===\n");
@@ -15,7 +16,8 @@ void print_menu() {
     printf("6. Recommend friends\n");
     printf("7. Find relationship distance (BFS)\n");
     printf("8. Find connected groups (DFS)\n");
-    printf("9. Exit\n");
+    printf("9. Influence analysis (Top-K)\n");
+    printf("10. Exit\n");
     printf("Select: ");
 }
 
@@ -89,11 +91,16 @@ int main() {
                 dfs_find_groups(g);
                 break;
             case 9:
+                printf("Enter K: ");
+                int k;
+                scanf("%d", &k);
+                getchar();
+                centrality_top_k(g, k);
+                break;
+            case 10:
                 graph_free(g);
                 printf("Goodbye!\n");
                 return 0;
-            default:
-                printf("Invalid input.\n");
-        }
+                    }
     }
 }
