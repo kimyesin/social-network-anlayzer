@@ -8,7 +8,7 @@ void dfs_visit(Graph *g, int id, int visited[]) {
     AdjNode *cur = g->users[id].head;
     while (cur != NULL) {
         if (!visited[cur->dest])
-            dfs_visit(g, cur->dest, visited);  // 재귀로 깊이 탐색
+            dfs_visit(g, cur->dest, visited);
         cur = cur->next;
     }
 }
@@ -20,10 +20,10 @@ void dfs_find_groups(Graph *g) {
     for (int i = 0; i < MAX_USERS; i++) {
         if (g->users[i].is_active && !visited[i]) {
             group_count++;
-            printf("그룹 %d: ", group_count);
+            printf("Group %d: ", group_count);
             dfs_visit(g, i, visited);
             printf("\n");
         }
     }
-    printf("총 %d개 그룹\n", group_count);
+    printf("Total %d group(s)\n", group_count);
 }
