@@ -4,6 +4,8 @@
 #include "bfs.h"
 #include "dfs.h"
 #include "sort.h"
+#include "centrality.h"
+#include "log.h"
 
 void print_menu() {
     printf("\n=== Social Network Analyzer ===\n");
@@ -15,14 +17,18 @@ void print_menu() {
     printf("6. Recommend friends\n");
     printf("7. Find relationship distance (BFS)\n");
     printf("8. Find connected groups (DFS)\n");
-    printf("9. Exit\n");
+    printf("9. Influence analysis (Top-K)\n");
+    printf("10. View activity log\n");
+    printf("11. Exit\n");
     printf("Select: ");
 }
 
 int main() {
     Graph *g = graph_create();
+    ActivityLog *log = log_create();
     int choice;
     char name1[MAX_USERNAME], name2[MAX_USERNAME];
+    char log_msg[100];
 
     while (1) {
         print_menu();
@@ -35,12 +41,16 @@ int main() {
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 graph_add_user(g, name1);
+                snprintf(log_msg, 100, "Added user: %s", name1);
+                log_add(log, log_msg);
                 break;
             case 2:
                 printf("Enter name to remove: ");
                 fgets(name1, MAX_USERNAME, stdin);
                 name1[strcspn(name1, "\n")] = 0;
                 graph_remove_user(g, name1);
+                snprintf(log_msg, 100, "Removed user: %s", name1);
+                log_add(log, log_msg);
                 break;
             case 3:
                 printf("First user: ");
@@ -50,6 +60,8 @@ int main() {
                 fgets(name2, MAX_USERNAME, stdin);
                 name2[strcspn(name2, "\n")] = 0;
                 graph_add_friend(g, name1, name2);
+                snprintf(log_msg, 100, "Added friend: %s <-> %s", name1, name2);
+                log_add(log, log_msg);
                 break;
             case 4:
                 printf("First user: ");
@@ -59,6 +71,8 @@ int main() {
                 fgets(name2, MAX_USERNAME, stdin);
                 name2[strcspn(name2, "\n")] = 0;
                 graph_remove_friend(g, name1, name2);
+                snprintf(log_msg, 100, "Removed friend: %s <-> %s", name1, name2);
+                log_add(log, log_msg);
                 break;
             case 5:
                 printf("Enter name: ");
@@ -89,7 +103,18 @@ int main() {
                 dfs_find_groups(g);
                 break;
             case 9:
+                printf("Enter K: ");
+                int k;
+                scanf("%d", &k);
+                getchar();
+                centrality_top_k(g, k);
+                break;
+            case 10:
+                log_print(log);
+                break;
+            case 11:
                 graph_free(g);
+                log_free(log);
                 printf("Goodbye!\n");
                 return 0;
             default:
