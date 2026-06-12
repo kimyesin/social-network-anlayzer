@@ -23,13 +23,14 @@ typedef struct {
     HashTable *ht;
 } Graph;
 
-// 함수 선언
 Graph *graph_create();
+void graph_free(Graph *g);
+
 void graph_add_user(Graph *g, char *name);
 void graph_remove_user(Graph *g, char *name);
-void graph_add_friend(Graph *g, char *a, char *b);
-void graph_remove_friend(Graph *g, char *a, char *b);
+
+void graph_add_friend(Graph *g, char *user1, char *user2);
+void graph_remove_friend(Graph *g, char *user1, char *user2);
 void graph_print_friends(Graph *g, char *name);
-void graph_free(Graph *g);
 
 #endif
